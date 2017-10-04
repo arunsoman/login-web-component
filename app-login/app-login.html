@@ -1,21 +1,19 @@
-<script>
-class AppLogin extends HTMLElement{
+<script>class AppLogin extends HTMLElement{
 
 	constructor(){
 		super();
 		const template = document.createElement('template');
 		template.innerHTML = `
-			<form action=()=>{return this.getAttribute('login-url')} id ='login'>
-
+			<form  id ='login'>
 			  <div class="container">
 			    <label><b>Username</b></label>
-			    <input type="text" placeholder="Enter Username" name="uname" required>
+			    <input type="text" placeholder="Enter Username" id="uname" name="uname" required>
 
 			    <label><b>Password</b></label>
-			    <input type="password" placeholder="Enter Password" name="psw" required>
+			    <input type="password" placeholder="Enter Password" id="pswd" name="psw" required disabled>
 
-			    <button type="submit" onclick = "post">Login</button>
-			    <input type="checkbox" checked="checked"> Remember me
+			    <button type="submit" id="loginBtn" disabled >Login</button>
+			    <input type="checkbox" checked="checked" id="rememberMe"> Remember me
 			  </div>
 
 			  <div class="container" style="background-color:#f1f1f1">
@@ -24,16 +22,79 @@ class AppLogin extends HTMLElement{
 			  </div>
 			</form>
 			  `;
-		
+		console.log(this);
       	this.attachShadow({mode: 'open'});
       	this.shadowRoot.appendChild(template.content.cloneNode(true));
 		console.log("constructor done");
 	}
 
 
-	connectedCallback(who){
-		console.log("ConnectedCallback");
-	}
+	// post(){
+	// return this.getAttribute('login-url')
+	// }
+
+	connectedCallback(){
+    //get the input field values
+    var userInfo = this.getUserInfo();
+
+    userInfo.username.addEventListener("input",function(){
+      if(userInfo.username.value.length >0){
+        userInfo.password.disabled = false;
+      } else {
+          userInfo.password.value = '';
+          userInfo.password.disabled = true;
+          userInfo.loginButton.disabled = true;
+      }
+    });
+    userInfo.password.addEventListener("input",function(){
+        if(userInfo.password.value.length >0){
+          userInfo.loginButton.disabled = false;
+        } else{
+          userInfo.loginButton.disabled = true;
+        }
+    });
+
+    this.makeAjaxRequest();
+
+  }
+
+  getUserInfo(){
+    var username = this.shadowRoot.querySelector('#uname');
+    var password = this.shadowRoot.querySelector('#pswd');
+    var loginButton = this.shadowRoot.querySelector('#loginBtn');
+    var rememberMe =  this.shadowRoot.querySelector('#rememberMe').checked;
+    var userInfo = {
+      username:username,
+      password:password,
+      loginButton:loginButton,
+      rememberMe:rememberMe
+    }
+    return userInfo;
+  }
+
+  makeAjaxRequest(){
+    console.log("working");
+    var me = this;
+    var loginUrl = me.getAttribute('login-url') || "/login";
+    var userInfo = this.getUserInfo();
+
+    this.shadowRoot.querySelector('#loginBtn').addEventListener("click",function(e){
+        e.preventDefault();
+        var xhttp = new XMLHttpRequest();
+          var params = 'username='+userInfo.username.value+'&password='+userInfo.password.value+'&rememberMe='+userInfo.rememberMe;
+          console.log(params);
+          xhttp.open("POST", loginUrl, true);
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+          // var ironAjax=this.$.xhr;
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              console.log(this.responseText);
+            }
+          };
+          xhttp.send(params);
+    });
+  }
 
 	disconnectedCallback(){
 		console.log("disconnectedCallback");
