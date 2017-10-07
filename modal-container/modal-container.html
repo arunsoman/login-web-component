@@ -1,0 +1,35 @@
+<script>
+    class ModalContainer extends HTMLElement{
+        constructor(){
+            super();
+            this.template = document.createElement('template');
+            this.template.innerHTML = '<style>\n'+
+            '.modal {    display: none;   position: fixed;    z-index: 1;     padding-top: 100px;    left: 0;    top: 0;    width: 100%; height: 100%;    overflow: auto; background-color: rgb(0,0,0);  background-color: rgba(0,0,0,0.4); }'+
+            '.modal-content {    margin: auto;    background-color: #fefefe;    padding: 20px;    border: 1px solid #888;    width: 80%;}'+
+            '.close {   color: #aaaaaa;    float: right;    font-size: 28px;    font-weight: bold;}'+
+            '.close:hover,.close:focus {    color: #000;    text-decoration: none;    cursor: pointer;}'+
+            '</style>'+
+
+            '<div id="myModal" class="modal">  <div class="modal-content">  <p>Some text in the Modal..</p></div>'
+
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(this.template.content.cloneNode(true));
+            this.modal = this.shadowRoot.getElementById('myModal');
+            this.modal.style.display = "none";
+        }
+
+        display(){
+            this.modal.style.display = "block";
+            window.addEventListener('click', this.close)
+        }
+        
+        close(){
+                if (event.target == this.modal) {
+                    this.modal.style.display = "none";
+                    window.removeEventListener('click', this.close)
+                }
+        }
+    }
+    window.customElements.define('modal-container', ModalContainer);
+</script>
+</script>
