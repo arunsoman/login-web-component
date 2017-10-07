@@ -1,0 +1,32 @@
+<script>
+
+    class GenericConfigurator extends HTMLElement{
+        constructor(){
+            super();
+            const template = document.createElement('template');
+            template.innerHTML = `
+			<form  id ='genericconfigurator'>
+			  <div class="container">
+			    <label><b>Name</b></label>
+			    <input type="text" placeholder='Name' id="name" name="name" required>
+
+			    <label><b>Configuration</b></label>
+			    <textarea id="configuration" name="configuration" required disabled>
+
+			    <button type="submit" id="savebtn" disabled >Save</button>
+			  </div>
+
+			  <div class="container" style="background-color:#f1f1f1">
+			    <button type="button" class="cancelbtn">Cancel</button>
+			  </div>
+			</form>
+			  `;
+            console.log(this);
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+            console.log("constructor done");
+        }
+    }
+
+    window.customElements.define('generic-configurator', GenericConfigurator);
+</script>
