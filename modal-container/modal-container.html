@@ -10,16 +10,25 @@
             '.close:hover,.close:focus {    color: #000;    text-decoration: none;    cursor: pointer;}'+
             '</style>'+
 
-            '<div id="myModal" class="modal">  <div class="modal-content">  <p>Some text in the Modal..</p></div>'
+            '<div id="myModal" class="modal"><div id="modalTitle" class="modal-title"></div> <div id="modalContent" class="modal-content"> </div></div>'
 
             this.attachShadow({mode: 'open'});
             this.shadowRoot.appendChild(this.template.content.cloneNode(true));
             this.modal = this.shadowRoot.getElementById('myModal');
             this.modal.style.display = "none";
         }
+        set title(title){
+            let modalTitle = this.shadowRoot.getElementById("modalTitle");
+            if(modalTitle.hasChildNodes())modalTitle.removeChild();
+            let titleElem = document.createTextNode(title);
+            modalTitle.appendChild(titleElem);
+        }
 
-        display(){
+        display(view, uri){
             this.modal.style.display = "block";
+            let content = this.shadowRoot.getElementById("modalContent")
+            if(content.hasChildNodes())content.removeChild();
+            content.appendChild(document.createElement(view, uri));
             window.addEventListener('click', this.close)
         }
         
